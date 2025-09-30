@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Fruzz Tropical Boost</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #ff9900, #ffff66);
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #ff6600;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      background-color: #fff;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+    }
+    nav a {
+      text-decoration: none;
+      color: #ff6600;
+      font-weight: bold;
+    }
+    .container {
+      padding: 20px;
+    }
+    .product, form, .contact {
+      background-color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #ff6600;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e65c00;
+    }
+    .confirmation {
+      background-color: #dff0d8;
+      color: #3c763d;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+    }
+    @media (max-width: 600px) {
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🍍 Fruzz Tropical Boost</h1>
+  <p id="slogan">Commandez votre boisson énergisante fruitée !</p>
+</header>
+
+<nav>
+  <a href="#produit">Produit</a>
+  <a href="#commande">Commande</a>
+  <a href="#contact">Contact</a>
+  <select onchange="changerLangue(this.value)">
+    <option value="fr">FR</option>
+    <option value="en">EN</option>
+  </select>
+</nav>
+
+<div class="container">
+  <div class="product" id="produit">
+    <h2 id="titreProduit">Fruzz Tropical Boost</h2>
+    <p id="saveurs">Saveurs : Orange, Ananas, Mangue</p>
+    <p id="prix">Prix : 1,50 €</p>
+  </div>
+
+  <form id="commandeForm">
+    <h2 id="titreCommande">🛒 Passer une commande</h2>
+    <label for="name" id="labelNom">Nom complet :</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email" id="labelEmail">Adresse e-mail :</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="quantity" id="labelQuantite">Quantité :</label>
+    <select id="quantity" name="quantity">
+      <option value="1">1 canette</option>
+      <option value="6">Pack de 6</option>
+      <option value="12">Pack de 12</option>
+    </select>
+
+    <label for="message" id="labelMessage">Instructions ou adresse :</label>
+    <textarea id="message" name="message" rows="4"></textarea>
+
+    <button type="submit" id="btnCommander">Commander</button>
+  </form>
+
+  <div class="confirmation" id="confirmationMessage">
+    <h3>✅ Commande confirmée !</h3>
+    <p id="details"></p>
+  </div>
+
+  <div class="contact" id="contact">
+    <h2 id="titreContact">📞 Contact</h2>
+    <p id="contactTexte">Pour toute question, écrivez-nous à : <strong>contact@fruzz.com</strong></p>
+  </div>
+</div>
+
+<script>
+  document.getElementById("commandeForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const quantity = document.getElementById("quantity").value;
+    const message = document.getElementById("message").value;
+
+    const details = `
+      Merci <strong>${name}</strong> !<br>
+      Votre commande de <strong>${quantity}</strong> Fruzz est enregistrée.<br>
+      Nous vous contacterons à : <strong>${email}</strong><br>
+      Adresse / instructions : ${message}
+    `;
+
+    document.getElementById("details").innerHTML = details;
+    document.getElementById("confirmationMessage").style.display = "block";
+    document.getElementById("commandeForm").reset();
+  });
+
+  function changerLangue(langue) {
+    if (langue === "en") {
+      document.getElementById("slogan").textContent = "Order your fruity energy drink!";
+      document.getElementById("titreProduit").textContent = "Fruzz Tropical Boost";
+      document.getElementById("saveurs").textContent = "Flavors: Orange, Pineapple, Mango";
+      document.getElementById("prix").textContent = "Price: €1.50";
+      document.getElementById("titreCommande").textContent = "🛒 Place an order";
+      document.getElementById("labelNom").textContent = "Full name:";
+      document.getElementById("labelEmail").textContent = "Email address:";
+      document.getElementById("labelQuantite").textContent = "Quantity:";
+      document.getElementById("labelMessage").textContent = "Instructions or address:";
+      document.getElementById("btnCommander").textContent = "Order";
+      document.getElementById("titreContact").textContent = "📞 Contact";
+      document.getElementById("contactTexte").textContent = "For any questions, write to us at: contact@fruzz.com";
+    } else {
+      document.getElementById("slogan").textContent = "Commandez votre boisson énergisante fruitée !";
+      document.getElementById("titreProduit").textContent = "Fruzz Tropical Boost";
+      document.getElementById("saveurs").textContent = "Saveurs : Orange, Ananas, Mangue";
+      document.getElementById("prix").textContent = "Prix : 1,50 €";
+      document.getElementById("titreCommande").textContent = "🛒 Passer une commande";
+      document.getElementById("labelNom").textContent = "Nom complet :";
+      document.getElementById("labelEmail").textContent = "Adresse e-mail :";
+      document.getElementById("labelQuantite").textContent = "Quantité :";
+      document.getElementById("labelMessage").textContent = "Instructions ou adresse :";
+      document.getElementById("btnCommander").textContent = "Commander";
+      document.getElementById("titreContact").textContent = "📞 Contact";
+      document.getElementById("contactTexte").textContent = "Pour toute question, écrivez-nous à : contact@fruzz.com";
+    }
+  }
+</script>
+
+</body>
+</html>
