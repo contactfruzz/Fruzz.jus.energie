@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruzz — Boutique</title>
+    <style>
+        :root{--accent:#ff6600;--accent-dark:#e65c00;--bg:#fff9f2;--card:#fff;--muted:#6b6b6b;--radius:12px}
+        *{box-sizing:border-box}
+        body{margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;background:linear-gradient(180deg,#fffefb,#fff7ee);color:#111; line-height: 1.5;}
+        header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;background:var(--card);box-shadow:0 6px 18px rgba(17,17,17,0.06);position:sticky;top:0;z-index:5}
+        .brand{display:flex;gap:12px;align-items:center}
+        .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ffd24d);display:flex;align-items:center;justify-content:center;font-size:26px;color:white}
+        .searchBar{display:flex;gap:8px;align-items:center}
+        .searchBar input{padding:10px 12px;border-radius:8px;border:1px solid #eee;width:320px}
+        main{display:grid;grid-template-columns:1fr 380px;gap:20px;padding:20px}
+        @media (max-width:980px){main{grid-template-columns:1fr} .aside{order:2}}
+        .catalog{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+        .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(17,17,17,0.06);display:flex;flex-direction:column;gap:10px}
+        .card .thumb-img{height:160px; width: 100%; border-radius:8px;background:#faf6f2; object-fit: cover;}
+        .meta{display:flex;justify-content:space-between;align-items:center}
+        .price{font-weight:700;color:var(--accent)}
+        .btn{background:var(--accent);color:white;padding:10px;border-radius:10px;border:none;cursor:pointer; font-family: inherit; font-size: 15px;}
+        .btn:hover{background: var(--accent-dark);}
+        .btn.secondary{background:#f3f3f3;color:#333}
+        .btn.secondary:hover{background: #e9e9e9;}
+        .aside{position:sticky;top:94px;background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(17,17,17,0.06)}
+        .cart-item{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #f3f3f3}
+        .qty{display:flex;gap:6px;align-items:center}
+        .small{font-size:13px}
+        .muted{color:var(--muted)}
+        .product-page{background:var(--card);padding:16px;border-radius:12px}
+        .row{display:flex;gap:12px}
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;padding:20px; z-index: 10;}
+        .modal .box{background:white;border-radius:12px;padding:24px;max-width:600px;width:100%; max-height: 90vh; overflow-y: auto;}
+        .modal-header{display:flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #eee; padding-bottom: 12px;}
+        footer{padding:16px;text-align:center;color:var(--muted)}
+        form label{display: block; margin-top: 10px; font-weight: 600; font-size: 14px;}
+        form input, form textarea, form select{width:100%;padding:10px;margin-top:4px;border-radius:8px;border:1px solid #eee; font-family: inherit;}
+        .order-success{background:linear-gradient(90deg,#eaffef,#fff);padding:12px;border-radius:10px;margin-top:12px}
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand">
+        <div class="logo">🍍</div>
+        <h1>Fruzz Boutique</h1>
+    </div>
+    <div class="searchBar" role="search">
+        <input id="searchInput" placeholder="Rechercher des boissons, ex: mangue, pack..." aria-label="Rechercher produits">
+        <button id="searchBtn" class="btn secondary small">Rechercher</button>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+        <button id="ordersClear" class="small">Supprimer commandes</button>
+        <button id="openCart" class="btn">Panier (<span id="headerCount">0</span>)</button>
+    </div>
+</header>
+
+<main>
+    <section aria-label="Catalogue des produits">
+        <h2>Produits</h2>
+        <p class="muted">Cliquez sur un produit pour voir les détails</p>
+        <div id="catalog" class="catalog" aria-live="polite"></div>
+    </section>
+
+    <aside class="aside" aria-label="Panier et commande">
+        <h3>Panier</h3>
+        <div id="cartItems"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:10px; font-weight: bold;">
+            <div>Sous-total</div>
+            <div id="subtotal">0,00 €</div>
+        </div>
+        <div style="margin-top:12px">
+            <button id="checkoutBtn" class="btn" style="width:100%">Passer à la caisse</button>
+        </div>
+        <div id="ordersHistory" style="margin-top:24px">
+            <h4>Commandes récentes</h4>
+            <div id="ordersList" class="small muted">Aucune commande</div>
+        </div>
+    </aside>
+</main>
+
+<footer>
+    Prototype e‑commerce — données stockées localement • Fruzz 2025
+</footer>
+
+<div id="checkoutModal" class="modal">
+    <div class="box">
+        <div class="modal-header">
+            <h2>Valider la commande</h2>
+            <button id="closeCheckoutModal" class="btn secondary small">Fermer</button>
+        </div>
+
+        <h4>Récapitulatif de votre panier</h4>
+        <div id="checkoutSummary"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:10px; font-weight: bold; font-size: 1.2em; border-top: 1px solid #eee; padding-top: 10px;">
+            <div>Total à payer</div>
+            <div id="checkoutTotal">0,00 €</div>
+        </div>
+
+        <h4 style="margin-top: 24px;">Informations de livraison</h4>
+        <form id="checkoutForm">
+            <label for="cName">Nom complet *</label>
+            <input id="cName" required aria-required="true" />
+
+            <label for="cEmail">E‑mail *</label>
+            <input id="cEmail" type="email" required />
+
+            <label for="cPhone">Téléphone *</label>
+            <input id="cPhone" type="tel" required />
+
+            <label for="cAddress">Adresse complète *</label>
+            <textarea id="cAddress" rows="3" required></textarea>
+
+            <label for="cPayment">Méthode de paiement</label>
+            <select id="cPayment">
+                <option value="cod">Paiement à la livraison</option>
+                <option value="card">Carte de crédit (simulé)</option>
+            </select>
+            
+            <div style="margin-top:20px">
+                <button type="submit" class="btn" style="width:100%; padding: 12px;">Confirmer la commande</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// (script complet — inchangé depuis votre version sauf ligne finale)
+... // Vous avez déjà ce script, donc je ne le répète pas ici.
+window.location.href =
+
